@@ -1,0 +1,82 @@
+<div class="aurora">
+  <div class="aurora_item"></div>
+  <div class="aurora_item"></div>
+  <div class="aurora_item"></div>
+  <div class="aurora_item"></div>
+</div>
+
+<div class="card">
+  <div class="card2">
+
+    <!-- Título y subtítulo -->
+    <h1 class="title">DETECTOR DE IA</h1>
+    <p class="subtitle">Nada se nos escapa</p>
+
+    <!-- Contenedor formulario -->
+    <div class="form-container">
+      <input (change)="clearMessage()" checked type="checkbox" id="switch" />
+
+      <!-- Registro -->
+      <div class="sign-up-container">
+        <span class="form-title">¡Regístrate!</span>
+        <label for="switch" class="switch-label">¿Ya tienes una cuenta?</label>
+
+        <form (ngSubmit)="onSignUp()" class="sign-up-form">
+          <label for="username-sign-up">Usuario</label>
+          <input [(ngModel)]="user" class="input" placeholder="Juan_243" id="username-sign-up" name="Username" type="text" />
+
+          <label for="email-sign-up">Correo</label>
+          <input [(ngModel)]="email" class="input" placeholder="juanito@example.com" id="email-sign-up" name="Email" type="email" />
+
+          <label for="pwd-sign-up">Contraseña</label>
+          <input [(ngModel)]="password" class="input" placeholder="••••••••" id="pwd-sign-up" name="Password" type="password" />
+
+          <label for="confirm-pwd-sign-up">Confirma tu contraseña</label>
+          <input [(ngModel)]="confirmPassword" class="input" placeholder="••••••••" id="confirm-pwd-sign-up" name="ConfirmPassword" type="password" />
+          <!-- Mensaje de alerta -->
+          <div class="alert" *ngIf="message" [ngClass]="messageType">
+            {{ message }}
+          </div>
+          <button type="submit">Registrarse</button>
+        </form>
+      </div>
+
+      <!-- Login -->
+      <div class="log-in-container">
+        <span class="form-title">Iniciar sesión</span>
+        <label for="switch" class="switch-label">¿No tienes una cuenta?</label>
+
+        <form (ngSubmit)="onLogin()" class="log-in-form">
+          <label for="email-log-in">Correo</label>
+          <input [(ngModel)]="email" class="input" placeholder="juanito@example.com" id="email-log-in" name="Email" type="email" />
+
+          <label for="pwd-log-in">Contraseña</label>
+          <input [(ngModel)]="password" class="input" placeholder="••••••••" id="pwd-log-in" name="Password" type="password" />
+          <!-- Mensaje de alerta -->
+          <div class="alert" *ngIf="message" [ngClass]="messageType">
+            {{ message }}
+          </div>
+          <button type="submit" class="flip-card__btn custom-btn">Ingresar</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Diálogo de verificación -->
+<div class="verification-dialog" *ngIf="showVerificationDialog">
+  <div class="dialog-content">
+    <h2>Verificación de correo</h2>
+    <p>Hemos enviado un código de verificación al correo <strong>{{ email }}</strong>.</p>
+
+    <label for="verification-code">Introduce el código:</label>
+    <input [(ngModel)]="verificationCode" id="verification-code" type="text" class="input" placeholder="Ej: 123456" />
+
+    <div class="dialog-buttons">
+      <button (click)="verifyCode()">Verificar</button>
+      <button class="cancel-btn" (click)="closeDialog()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
