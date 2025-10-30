@@ -3,6 +3,8 @@ package co.edu.unbosque.proyectoia.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
+import co.edu.unbosque.proyectoia.dto.UsuarioDTO;
 @Service
 public class ArchivoService implements CRUDOperation {
 
@@ -35,9 +37,9 @@ public class ArchivoService implements CRUDOperation {
 	}
 
 	@Override
-	public long count() {
+	public Long count() {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -45,5 +47,18 @@ public class ArchivoService implements CRUDOperation {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public UsuarioDTO getById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int deleteByNombre(String nombre) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 }

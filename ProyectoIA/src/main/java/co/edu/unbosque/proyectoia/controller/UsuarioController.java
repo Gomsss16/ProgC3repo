@@ -1,160 +1,149 @@
 package co.edu.unbosque.proyectoia.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.Optional;
-
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 import co.edu.unbosque.proyectoia.dto.UsuarioDTO;
-
+import co.edu.unbosque.proyectoia.entity.Usuario;
+import co.edu.unbosque.proyectoia.entity.Usuario.Role;
 import co.edu.unbosque.proyectoia.service.UsuarioService;
-import jakarta.validation.constraints.Email;
-
 
 @RestController
-@CrossOrigin(origins = { "*" })
-@RequestMapping(path = { "/api/usuarios" })
+@RequestMapping("/Usuario")
+@CrossOrigin(origins = { "http://localhost:8080", "http://localhost:8081" })
+@Transactional
+@Tag(name = "Gestión de Usuarios", description = "Endpoints para administrar usuarios")
+@SecurityRequirement(name = "bearerAuth")
 public class UsuarioController {
-	
+
 	@Autowired
-	private UsuarioService usuarioService;
-	
-	
-	public UsuarioController() {
-		// TODO Auto-generated constructor stub
+	private UsuarioService usuarioServ;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+	@Operation(summary = "Crear usuario con JSON")
+	@PostMapping(path = "/createjson", consumes = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> createNewWithJSON(@RequestBody UsuarioDTO newUsuario) {
+		if (newUsuario.getNombre().contains("<") || newUsuario.getNombre().contains(">")) {
+			return new ResponseEntity<>("Solicitud con caracteres inválidos", HttpStatus.BAD_REQUEST);
+		}
+
+		if (newUsuario.getCorreo() == null || newUsuario.getCorreo().isBlank()) {
+			return new ResponseEntity<>("El correo es obligatorio", HttpStatus.BAD_REQUEST);
+		}
+
+		Usuario entity = modelMapper.map(newUsuario, Usuario.class);
+		UsuarioDTO dtoMapped = modelMapper.map(entity, UsuarioDTO.class);
+
+		int status = usuarioServ.create(dtoMapped);
+
+		if (status == 0) {
+			return new ResponseEntity<>("Usuario creado exitosamente", HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<>("Error al crear el usuario, posiblemente el nombre o correo ya está en uso",
+					HttpStatus.NOT_ACCEPTABLE);
+		}
 	}
-	
-	 
-	  
-	  @PostMapping(path = "/createusuario")
-	    public ResponseEntity<String> createNew(@RequestParam String nombre, @RequestParam @Email(message = "Debe ingresar un correo válido")String correo, 
-	            @RequestParam String contraseña) {
-		  UsuarioDTO newUser = new UsuarioDTO(nombre, correo, contraseña, null, false);
-	        int status = usuarioService.create(newUser);
 
-	        switch (status) {
-	            case 0:
-	                return new ResponseEntity<>("Administrador creado exitosamente", HttpStatus.CREATED);
-	            case 1:
-	                return new ResponseEntity<>("El usuario ya existe", HttpStatus.CONFLICT);
-	            case 2:
-	                return new ResponseEntity<>("Datos inválidos", HttpStatus.BAD_REQUEST);
-	            default:
-	                return new ResponseEntity<>("Error desconocido", HttpStatus.INTERNAL_SERVER_ERROR);
-	        }
-	    }
+	@Operation(summary = "Crear usuario")
+	@PostMapping(path = "/create")
+	ResponseEntity<String> createNew(@RequestParam String usuarioname,
+			@RequestParam String password,
+			@RequestParam String correo,
+			@RequestParam Role role) {
 
-	
-	  @PostMapping(path = "/loginusuario")
-	    public ResponseEntity<String> loginUsuario(@RequestParam String correo, @RequestParam String conrasenia) {
-	        
-	        UsuarioDTO usuario = new UsuarioDTO();
-	        System.out.println("=== ENDPOINT LOGIN ADMIN ===");
-	        System.out.println("Usuario: " + usuario.getCorreo());
-	        
-	        try {
-	            if (usuario.getCorreo() == null || usuario.getCorreo().trim().isEmpty()) {
-	                return new ResponseEntity<>("{\"error\": \"Usuario es requerido\"}", HttpStatus.BAD_REQUEST);
-	            }
-	            
-	            if (usuario.getContrasenia() == null || usuario.getContrasenia().trim().isEmpty()) {
-	                return new ResponseEntity<>("{\"error\": \"Contraseña es requerida\"}", HttpStatus.BAD_REQUEST);
-	            }
-	            
-	            int authResult = usuarioService.authenticateUsuario(usuario.getCorreo(), usuario.getContrasenia());
-	            System.out.println("Resultado autenticación: " + authResult);
-	            
-	            switch (authResult) {
-	                case 0:
-	                    System.out.println("Login exitoso");
-	                    
-	                    String response = String.format(
-	                        "{\"message\": \"Login exitoso\", \"usuario\": \"%s\"}", 
-	                        usuario.getCorreo()
-	                    );
-	                    return new ResponseEntity<>(response, HttpStatus.OK);
-	                    
-	                case 1:
-	                    System.out.println("Usuario no encontrado");
-	                    return new ResponseEntity<>("{\"error\": \"Usuario no encontrado\"}", HttpStatus.NOT_FOUND);
-	                    
-	                case 2:
-	                    System.out.println("Contraseña incorrecta");
-	                    return new ResponseEntity<>("{\"error\": \"Contraseña incorrecta\"}", HttpStatus.UNAUTHORIZED);
-	                    
-	                case 3:
-	                    System.out.println("Error del sistema");
-	                    return new ResponseEntity<>("{\"error\": \"Error del sistema\"}", HttpStatus.INTERNAL_SERVER_ERROR);
-	                    
-	                default:
-	                    return new ResponseEntity<>("{\"error\": \"Error desconocido\"}", HttpStatus.INTERNAL_SERVER_ERROR);
-	            }
-	            
-	        } catch (Exception e) {
-	            System.err.println("Excepción en login: " + e.getMessage());
-	            return new ResponseEntity<>("{\"error\": \"Error interno del servidor\"}", HttpStatus.INTERNAL_SERVER_ERROR);
-	        }
-	    }
+		if (correo == null || correo.isBlank()) {
+			return new ResponseEntity<>("El correo es obligatorio", HttpStatus.BAD_REQUEST);
+		}
 
-	@PostMapping("/generarCodigo")
-	public ResponseEntity<String> generarNuevoCodigo(
-	        @RequestParam @Email(message = "Debe ingresar un correo válido") String correo)
-	        {
+		UsuarioDTO newUsuario = new UsuarioDTO(null, usuarioname, correo, password, null, false, role);
+		if (role != null) {
+			newUsuario.setRole(role);
+		}
 
-	    boolean generado = usuarioService.generarNuevoCodigo(correo);
+		int status = usuarioServ.create(newUsuario);
 
-	    if (!generado) {
-	        return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
-	    }
-
-	    return new ResponseEntity<>("Operación realizada", HttpStatus.OK);
+		if (status == 0) {
+			return new ResponseEntity<>("Usuario creado exitosamente", HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<>("Error al crear el usuario, posiblemente el nombre o correo ya está en uso",
+					HttpStatus.NOT_ACCEPTABLE);
+		}
 	}
-	
-//	@PostMapping("/generarCodigo")
-//	public ResponseEntity<String> generarNuevoCodigo(HttpSession session) {
-//	    Long usuarioId = (Long) session.getAttribute("usuarioId"); // usuario logueado
-//	    if (usuarioId == null) {
-//	        return new ResponseEntity<>("Usuario no autenticado", HttpStatus.UNAUTHORIZED);
-//	    }
-//
-//	    boolean generado = usuarioService.generarNuevoCodigoParaUsuario(usuarioId);
-//	    if (!generado) {
-//	        return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
-//	    }
-//
-//	    return new ResponseEntity<>("Operación realizada", HttpStatus.OK);
-//	}
-//	  
-//	 
-	
-	@PostMapping("/verificar")
-	public ResponseEntity<String> verificar(
-	        @RequestParam @Email(message = "Debe ingresar un correo válido")String correo,
-	        @RequestParam String codigo) {
 
-	    int resultado = usuarioService.verificarCodigo(correo, codigo);
-
-	    switch (resultado) {
-	        case 0:
-	            return new ResponseEntity<>("Usuario validado correctamente", HttpStatus.OK);
-	        case 1:
-	            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
-	        case 2:
-	            return new ResponseEntity<>("Código incorrecto", HttpStatus.BAD_REQUEST);
-	        default:
-	            return new ResponseEntity<>("Error desconocido", HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
+	@Operation(summary = "Obtener todos los usuarios")
+	@GetMapping("/getall")
+	ResponseEntity<List<UsuarioDTO>> getAll() {
+		List<UsuarioDTO> usuarios = usuarioServ.getAll();
+		if (usuarios.isEmpty()) {
+			return new ResponseEntity<>(usuarios, HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(usuarios, HttpStatus.ACCEPTED);
 	}
-	
-	
+
+	@Operation(summary = "Contar usuarios")
+	@GetMapping("/count")
+	ResponseEntity<Long> countAll() {
+		Long count = usuarioServ.count();
+		if (count == 0) {
+			return new ResponseEntity<>(count, HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(count, HttpStatus.ACCEPTED);
+	}
+
+	@Operation(summary = "Verificar existencia de usuario")
+	@GetMapping("/exists/{id}")
+	ResponseEntity<Boolean> exists(@PathVariable Long id) {
+		boolean found = usuarioServ.exist(id);
+		return found ? new ResponseEntity<>(true, HttpStatus.ACCEPTED)
+				: new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+	}
+
+	@Operation(summary = "Obtener usuario por ID")
+	@GetMapping("/getbyid/{id}")
+	ResponseEntity<UsuarioDTO> getById(@PathVariable Long id) {
+		UsuarioDTO found = usuarioServ.getById(id);
+		if (found != null) {
+			return new ResponseEntity<>(found, HttpStatus.ACCEPTED);
+		}
+		return new ResponseEntity<>(new UsuarioDTO(), HttpStatus.NOT_FOUND);
+	}
+
+	@Operation(summary = "Actualizar usuario (JSON)")
+	@PutMapping(path = "/updatejson", consumes = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> updateNewWithJSON(@RequestParam Long id, @RequestBody UsuarioDTO newUsuario) {
+		int status = usuarioServ.updateById(id, newUsuario);
+
+		return switch (status) {
+		case 0 -> new ResponseEntity<>("Usuario actualizado exitosamente", HttpStatus.ACCEPTED);
+		case 1 -> new ResponseEntity<>("El nuevo nombre de usuario ya está en uso", HttpStatus.IM_USED);
+		case 2 -> new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+		default -> new ResponseEntity<>("Error al actualizar", HttpStatus.BAD_REQUEST);
+		};
+	}
+
+	@Operation(summary = "Eliminar usuario por ID")
+	@DeleteMapping("/deletebyid/{id}")
+	ResponseEntity<String> deleteById(@PathVariable Long id) {
+		int status = usuarioServ.deleteById(id);
+		return status == 0 ? new ResponseEntity<>("Usuario eliminado exitosamente", HttpStatus.ACCEPTED)
+				: new ResponseEntity<>("Error al eliminar", HttpStatus.NOT_FOUND);
+	}
+
+	@Operation(summary = "Eliminar usuario por nombre")
+	@DeleteMapping("/deletebyname")
+	ResponseEntity<String> deleteByName(@RequestParam String name) {
+		int status = usuarioServ.deleteByNombre(name);
+		return status == 0 ? new ResponseEntity<>("Usuario eliminado exitosamente", HttpStatus.ACCEPTED)
+				: new ResponseEntity<>("Error al eliminar", HttpStatus.NOT_FOUND);
+	}
 }

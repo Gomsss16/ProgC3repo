@@ -3,12 +3,10 @@ package co.edu.unbosque.proyectoia.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
+import co.edu.unbosque.proyectoia.dto.UsuarioDTO;
 @Service
 public class ResultadoIaService implements CRUDOperation  {
-
-	public ResultadoIaService() {
-		// TODO Auto-generated constructor stub
-	}
 
 	@Override
 	public int create(Object data) {
@@ -35,9 +33,9 @@ public class ResultadoIaService implements CRUDOperation  {
 	}
 
 	@Override
-	public long count() {
+	public Long count() {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -45,5 +43,19 @@ public class ResultadoIaService implements CRUDOperation  {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public UsuarioDTO getById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int deleteByNombre(String nombre) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
 
 }

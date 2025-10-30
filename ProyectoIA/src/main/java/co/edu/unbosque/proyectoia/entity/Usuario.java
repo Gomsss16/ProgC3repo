@@ -1,37 +1,109 @@
 package co.edu.unbosque.proyectoia.entity;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "usuario")
-public class Usuario {
-	
-	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
+@Table(name = "user")
+public class Usuario implements UserDetails {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(unique = false, nullable = false)
 	private String nombre;
+
+	@Column(unique = true, nullable = false)
 	private String correo;
+
+	@Column(nullable = false)
 	private String contrasenia;
-	@Transient
-	private String codigoVerificacion;
-	private boolean validarCodigo;
+
+	@Column(name = "token")
+	private String token;
+
+	@Column(name = "verificado")
+	private boolean verificado;
+
+	private String validarCodigo;
+
+	@Enumerated(EnumType.STRING)
+	private Role role;
+
+	private boolean accountNonExpired;
+	private boolean accountNonLocked;
+	private boolean credentialsNonExpired;
+	private boolean enabled;
 
 	public Usuario() {
-		// TODO Auto-generated constructor stub
 	}
 
-	public Usuario(String nombre, String correo, String contrasenia, String codigoVerificacion, boolean validarCodigo) {
-		super();
+	public enum Role {
+		USER, ADMIN
+	}
+
+	public Usuario(String string, String string2, Role admin) {
+		this.validarCodigo = UUID.randomUUID().toString();
+		this.accountNonExpired = true;
+		this.accountNonLocked = true;
+		this.credentialsNonExpired = true;
+		this.enabled = true;
+		this.role = Role.USER;
+	}
+
+	public Usuario(Long id, String nombre, String correo, String contrasenia, String token, boolean verificado) {
+		this.id = id;
 		this.nombre = nombre;
 		this.correo = correo;
 		this.contrasenia = contrasenia;
-		this.codigoVerificacion = codigoVerificacion;
-		this.validarCodigo = validarCodigo;
+		this.token = token;
+		this.verificado = verificado;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+	}
+
+	@Override
+	public String getPassword() {
+		return contrasenia;
+	}
+
+	@Override
+	public String getUsername() {
+		return correo;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return accountNonExpired;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return accountNonLocked;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return credentialsNonExpired;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
 	}
 
 	public Long getId() {
@@ -58,63 +130,80 @@ public class Usuario {
 		this.correo = correo;
 	}
 
-	public String getContrasenia() {
-		return contrasenia;
-	}
-
 	public void setContrasenia(String contrasenia) {
 		this.contrasenia = contrasenia;
 	}
 
-	public String getCodigoVerificacion() {
-		return codigoVerificacion;
+	public String getToken() {
+		return token;
 	}
 
-	public void setCodigoVerificacion(String codigoVerificacion) {
-		this.codigoVerificacion = codigoVerificacion;
+	public void setToken(String token) {
+		this.token = token;
 	}
 
-	public boolean isValidarCodigo() {
+	public boolean isVerificado() {
+		return verificado;
+	}
+
+	public void setVerificado(boolean verificado) {
+		this.verificado = verificado;
+	}
+
+	public String getValidarCodigo() {
 		return validarCodigo;
 	}
 
-	public void setValidarCodigo(boolean validarCodigo) {
+	public void setValidarCodigo(String validarCodigo) {
 		this.validarCodigo = validarCodigo;
 	}
 
-	@Override
-	public String toString() {
-		return "Usuario [id=" + id + ", nombre=" + nombre + ", correo=" + correo + ", contrasenia=" + contrasenia
-				+ ", codigoVerificacion=" + codigoVerificacion + ", validarCodigo=" + validarCodigo + "]";
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public void setAccountNonExpired(boolean accountNonExpired) {
+		this.accountNonExpired = accountNonExpired;
+	}
+
+	public void setAccountNonLocked(boolean accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
+	}
+
+	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+		this.credentialsNonExpired = credentialsNonExpired;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public String getContrasenia() {
+		return contrasenia;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigoVerificacion, contrasenia, correo, id, nombre, validarCodigo);
+		return Objects.hash(id, correo, contrasenia);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!(obj instanceof Usuario other))
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Usuario other = (Usuario) obj;
-		return Objects.equals(codigoVerificacion, other.codigoVerificacion)
-				&& Objects.equals(contrasenia, other.contrasenia) && Objects.equals(correo, other.correo)
-				&& Objects.equals(id, other.id) && Objects.equals(nombre, other.nombre)
-				&& validarCodigo == other.validarCodigo;
+		return Objects.equals(id, other.id) && Objects.equals(correo, other.correo)
+				&& Objects.equals(contrasenia, other.contrasenia);
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	@Override
+	public String toString() {
+		return "Usuario [id=" + id + ", nombre=" + nombre + ", correo=" + correo + ", verificado=" + verificado
+				+ ", role=" + role + "]";
+	}
 }

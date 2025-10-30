@@ -12,7 +12,11 @@ public interface CRUDOperation <D>{
 	
 	public int updateById(Long id,D newData);
 	
-	public long count();
+	public Long count();
 	
 	public boolean exist(Long id);
+
+	public D getById(Long id);
+
+	public int deleteByNombre(String nombre);
 }
