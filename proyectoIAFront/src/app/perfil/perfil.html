@@ -1,0 +1,22 @@
+
+
+<div class="sidebar active">
+  <nav class="navbar">
+    <span class="navbar-title">Perfil</span>
+  </nav>
+  <p> </p>
+  <div class="sidebar-header">
+
+    <h3>{{ usuario.nombre }}</h3>
+    <p>{{ usuario.role }}</p>
+  </div>
+  <div class="sidebar-content">
+    <div class="info-item">
+      <span class="info-label">Correo:</span>
+      <span class="info-value">{{ usuario.correo }}</span>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="logout()">Cerrar sesión</button>
+  </div>
+</div>

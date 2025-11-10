@@ -1,0 +1,60 @@
+<div
+  class="sidenav"
+  [ngClass]="isLeftSidebarCollapsed() ? 'sidenav-collapsed' : ''"
+>
+  <div class="logo-container">
+    <button>
+      <img src="assets/Logo_detectorIA.jpeg" class="logo-img" alt="Logo Detector IA">
+    </button>
+    @if (!isLeftSidebarCollapsed()) {
+      <div class="logo-text">detector IA</div>
+      <button class="btn-close" (click)="closeSidenav()">
+        <i class="fal fa-times close-icon"></i>
+      </button>
+    }
+  </div>
+  <div class="sidenav-nav">
+    @for (item of items; track $index) {
+      <!-- ✅ OCULTAR SI ES adminOnly Y NO ES ADMIN -->
+      @if (!item.adminOnly || isAdmin()) {
+        <li class="sidenav-nav-item">
+          @if (item.routeLink !== 'perfil') {
+            <a
+              class="sidenav-nav-link"
+              [routerLink]="item.routeLink"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <i class="sidenav-link-icon" [class]="item.icon"></i>
+              @if (!isLeftSidebarCollapsed()) {
+                <span class="sidenav-link-text">{{ item.label }}</span>
+              }
+            </a>
+          }
+          @else {
+            <button
+              class="sidenav-nav-link sidenav-btn"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasRight"
+              aria-controls="offcanvasRight">
+              <i class="sidenav-link-icon" [class]="item.icon"></i>
+              @if (!isLeftSidebarCollapsed()) {
+                <span class="sidenav-link-text">{{ item.label }}</span>
+              }
+            </button>
+          }
+        </li>
+      }
+    }
+  </div>
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <app-perfil></app-perfil>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="historial-container">
+  <h2>📊 Mi Historial de Actividad</h2>
+
+  <div *ngIf="loading" class="loading">
+    Cargando historial...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && historial.length === 0" class="empty">
+    No tienes actividad registrada aún.
+  </div>
+
+  <div class="historial-list" *ngIf="!loading && historial.length > 0">
+    <div class="historial-item" *ngFor="let accion of historial">
+      <div class="icono">{{ getIcono(accion.tipo) }}</div>
+      <div class="contenido">
+        <h3>{{ accion.tipo }}</h3>
+        <p>{{ accion.detalles }}</p>
+        <div class="meta">
+          <span class="fecha">🕒 {{ formatearFecha(accion.fecha) }}</span>
+          <span class="ip">🌐 {{ accion.ip }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

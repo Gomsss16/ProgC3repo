@@ -1,0 +1,276 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-container {
+  min-height: 100vh;
+  width: 100%;
+  padding: 40px 60px;
+  margin: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid rgba(255,255,255,0.3);
+}
+
+h2 {
+  color: white;
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+}
+
+.search-box {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 40px;
+  max-width: 700px;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 18px 24px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  background: white;
+  transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.search-box input:focus {
+  outline: none;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+}
+
+.search-box input::placeholder {
+  color: #adb5bd;
+}
+
+.btn-search {
+  padding: 18px 32px;
+  background: white;
+  color: #667eea;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  white-space: nowrap;
+}
+
+.btn-search:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  background: #f8f9fa;
+}
+
+.loading {
+  text-align: center;
+  padding: 80px 20px;
+  color: white;
+  font-size: 22px;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 25px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error {
+  text-align: center;
+  padding: 50px;
+  font-size: 20px;
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  font-weight: 600;
+}
+
+.empty {
+  text-align: center;
+  padding: 50px;
+  font-size: 20px;
+  background: rgba(255,255,255,0.95);
+  color: #7f8c8d;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  font-weight: 500;
+}
+
+.usuarios-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: 25px;
+  padding-bottom: 40px;
+}
+
+.usuario-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  transition: all 0.3s;
+}
+
+.usuario-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+}
+
+.usuario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #f0f0f0;
+}
+
+.usuario-info h3 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.correo {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.badge {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+}
+
+.historial-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.historial-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.historial-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.historial-list::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.historial-item {
+  display: flex;
+  padding: 18px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  transition: all 0.3s;
+  border-left: 4px solid transparent;
+}
+
+.historial-item:hover {
+  background: #e9ecef;
+  transform: translateX(8px);
+  border-left-color: #667eea;
+}
+
+.icono {
+  font-size: 36px;
+  margin-right: 18px;
+  line-height: 1;
+}
+
+.contenido {
+  flex: 1;
+}
+
+.contenido h4 {
+  margin: 0 0 10px 0;
+  color: #495057;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.contenido p {
+  margin: 0 0 10px 0;
+  color: #6c757d;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.meta {
+  display: flex;
+  gap: 25px;
+  font-size: 13px;
+  color: #adb5bd;
+  font-weight: 500;
+}
+
+.fecha, .ip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sin-actividad {
+  text-align: center;
+  padding: 40px;
+  color: #adb5bd;
+  font-style: italic;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 20px;
+  }
+
+  .usuarios-list {
+    grid-template-columns: 1fr;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  .search-box {
+    flex-direction: column;
+  }
+}

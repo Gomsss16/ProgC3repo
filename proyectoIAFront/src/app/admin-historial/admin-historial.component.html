@@ -1,0 +1,60 @@
+<div class="admin-container">
+  <div class="header">
+    <h2>🔍 Auditoría de Usuarios</h2>
+  </div>
+
+  <div class="search-box">
+    <input
+      type="email"
+      [(ngModel)]="correo"
+      placeholder="🔍 Buscar por correo o presiona Enter para recargar..."
+      (keyup.enter)="buscarPorCorreo()"
+    />
+    <button class="btn-search" (click)="buscarPorCorreo()">
+      🔍 Buscar
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    Cargando auditoría...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && usuariosFiltrados.length === 0" class="empty">
+    No se encontraron usuarios.
+  </div>
+
+  <div class="usuarios-list" *ngIf="!loading && usuariosFiltrados.length > 0">
+    <div class="usuario-card" *ngFor="let usuario of usuariosFiltrados">
+      <div class="usuario-header">
+        <div class="usuario-info">
+          <h3>{{ usuario.nombre }}</h3>
+          <p class="correo">{{ usuario.correo }}</p>
+        </div>
+        <span class="badge">{{ usuario.historial.length }} acciones</span>
+      </div>
+
+      <div class="historial-list" *ngIf="usuario.historial.length > 0">
+        <div class="historial-item" *ngFor="let accion of usuario.historial">
+          <div class="icono">{{ getIcono(accion.tipo) }}</div>
+          <div class="contenido">
+            <h4>{{ accion.tipo }}</h4>
+            <p>{{ accion.detalles }}</p>
+            <div class="meta">
+              <span class="fecha">🕒 {{ formatearFecha(accion.fecha) }}</span>
+              <span class="ip">🌐 {{ accion.ip }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="usuario.historial.length === 0" class="sin-actividad">
+        Sin actividad registrada
+      </div>
+    </div>
+  </div>
+</div>

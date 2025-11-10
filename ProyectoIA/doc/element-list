@@ -1,0 +1,11 @@
+co.edu.unbosque.proyectoia
+co.edu.unbosque.proyectoia.configuration
+co.edu.unbosque.proyectoia.controller
+co.edu.unbosque.proyectoia.dto
+co.edu.unbosque.proyectoia.entity
+co.edu.unbosque.proyectoia.exception
+co.edu.unbosque.proyectoia.repository
+co.edu.unbosque.proyectoia.security
+co.edu.unbosque.proyectoia.service
+co.edu.unbosque.proyectoia.test
+co.edu.unbosque.proyectoia.util

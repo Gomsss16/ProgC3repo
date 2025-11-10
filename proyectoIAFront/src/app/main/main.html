@@ -1,0 +1,14 @@
+
+<div class="layout">
+  <!-- Menú lateral -->
+  <app-menu
+    [class.expandido]="!isLeftSidebarCollapsed"
+  [isLeftSidebarCollapsed]="isLeftSidebarCollapsed"
+  (changeIsLeftSidebarCollapsed)="isLeftSidebarCollapsed = $event">
+  </app-menu>
+
+  <!-- Contenido principal -->
+  <div class="main-content" [class.expandido]="isLeftSidebarCollapsed">
+    <router-outlet></router-outlet>
+  </div>
+</div>
